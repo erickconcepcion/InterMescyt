@@ -12,5 +12,7 @@ namespace InterMescyt.Data
             : base(options)
         {
         }
+        public DbSet<Header> Headers { get; set; }
+        public DbSet<TransLine> TransLines { get; set; }
     }
 }
