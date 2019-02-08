@@ -14,5 +14,7 @@ namespace InterMescyt.Data
         }
         public DbSet<Header> Headers { get; set; }
         public DbSet<TransLine> TransLines { get; set; }
+        public DbSet<Execution> Executions { get; set; }
+        public DbSet<ExecutionLine> ExecutionLines { get; set; }
     }
 }

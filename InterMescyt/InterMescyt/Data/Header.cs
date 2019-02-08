@@ -8,6 +8,10 @@ namespace InterMescyt.Data
 {
     public class Header
     {
+        public Header()
+        {
+            TransLines = new HashSet<TransLine>();
+        }
         public int Id { get; set; }
         [Display(Name = "RNC")]
         public string Rnc { get; set; }
