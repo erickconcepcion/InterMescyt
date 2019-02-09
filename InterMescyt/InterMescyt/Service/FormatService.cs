@@ -129,9 +129,14 @@ namespace InterMescyt.Service
                 header.Rnc,
                 header.Name,
                 header.Location,
-                header.TransDate.ToShortDateString()
+                header.TransDate.ToString("dd/MM/yyyy")
             };
-            var ret = GatherData(data);
+            List<string> toEnsamble = new List<string>();
+            for (int i = 0; i <= data.Length - 1; i++)
+            {
+                toEnsamble.Add(SetHeaderField(i, data[i]));
+            }
+            var ret = Ensamble(toEnsamble.ToArray());
             ValidateLineStructure(ret);
             return ret;
         }       
@@ -166,19 +171,15 @@ namespace InterMescyt.Service
                 line.Period.ToString(),
                 line.Title
             };
-            var ret = GatherData(data);
-            ValidateLineStructure(ret);
-            return ret;
-            
-        }
-        string GatherData(string[] data)
-        {
             List<string> toEnsamble = new List<string>();
             for (int i = 0; i <= data.Length - 1; i++)
             {
                 toEnsamble.Add(SetDetailField(i, data[i]));
             }
-            return Ensamble(toEnsamble.ToArray());
+            var ret = Ensamble(toEnsamble.ToArray());
+            ValidateLineStructure(ret);
+            return ret;
+            
         }
 
         public void ValidateLineStructure(string line)

@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using InterMescyt.Data;
+using InterMescyt.Service;
+using System.IO;
 
 namespace InterMescyt.Controllers
 {
@@ -13,9 +15,12 @@ namespace InterMescyt.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public HeadersController(ApplicationDbContext context)
+        private readonly IExportService _exportService;
+
+        public HeadersController(ApplicationDbContext context, IExportService exportService)
         {
             _context = context;
+            _exportService = exportService;
         }
 
         // GET: Headers
@@ -40,6 +45,24 @@ namespace InterMescyt.Controllers
             }
 
             return View(header);
+        }
+
+        public IActionResult Download(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            MemoryStream stream = _exportService.ExportFile(id.Value);
+            var content = stream.ToArray();
+            stream.Flush();
+            stream.Close();
+            if (content == null)
+                return NotFound();
+
+            return File(content, "application/force-download", $"Transaction{id}.txt"); // returns a FileStreamResult
+
+
         }
 
         // GET: Headers/Create

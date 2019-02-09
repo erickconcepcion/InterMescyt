@@ -45,6 +45,7 @@ namespace InterMescyt
 
             services.AddScoped<IFormatService, FormatService>();
             services.AddScoped<IChargeService, ChargeService>();
+            services.AddScoped<IExportService, ExportService>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
