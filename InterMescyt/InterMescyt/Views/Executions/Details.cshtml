@@ -1,0 +1,73 @@
+﻿@model InterMescyt.Data.Execution
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Execution</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.EndDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.EndDate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Executed)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Executed)
+        </dd>
+    </dl>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ExecutionLines.FirstOrDefault().Text)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ExecutionLines.FirstOrDefault().ValidationMessage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ExecutionLines.FirstOrDefault().Suscess)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ExecutionLines.FirstOrDefault().Execution)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ExecutionLines)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Text)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ValidationMessage)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Suscess)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Execution.Id)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

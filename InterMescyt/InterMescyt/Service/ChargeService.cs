@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace InterMescyt.Service
@@ -36,11 +37,13 @@ namespace InterMescyt.Service
             {
                 return header;
             }
+            
             header = _formatService.FileLineToHeader(
                 exec.ExecutionLines
                 .Where(el=>el.Text.FirstOrDefault()==_formatService.HeaderId)
                 .FirstOrDefault().Text);
             _context.Headers.Add(header);
+            exec.Executed = true;
             _context.SaveChanges();
             foreach (var item in exec.ExecutionLines.Where(el=>el.Text.FirstOrDefault() == _formatService.DetailId))
             {

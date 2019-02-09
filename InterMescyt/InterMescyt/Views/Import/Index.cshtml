@@ -1,0 +1,58 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Import</h1>
+
+<form action="@Url.Action("SaveUploadedFile")" class="dropzone" id="dropzoneForm">
+    <div style="border: 2px dashed #0087F7; border-radius: 5px; padding: 20px" class="dz-message needsclick text-center">
+        <h3>Arrastre aqui el archivo que desea cargar</h3><br>
+        <span class="note needsclick">
+            (Debe ser un archivo con la estructura segun el layout, de lo contrario fallara)
+        </span>
+    </div>
+</form>
+
+@section scripts
+    {
+    <script type="text/javascript">
+        Dropzone.options.dropzoneForm = {
+                init: function () {
+                    this.on("complete", function (data) {
+                        //var res = JSON.parse(data.xhr.responseText);
+                        if (data.xhr != undefined) {
+                            console.log(data.xhr);
+                            let response = JSON.parse(data.xhr.responseText)
+                            console.log(response, response.ExecutionId);
+                            //$("#loadingModal").modal('hide');
+                            if (data.xhr.status == 200 && response.ExecutionId != null) {
+                                if (response.Success) {
+                                    console.log(response);
+                                    console.log(response);
+                                    window.location.href = response;
+                                }
+                            }
+                        }
+                    });
+                    this.on("uploadprogress", function (file, progress, bytesSent) {
+                        console.log(progress);
+                        if (progress>=99) {
+                            //$("#loadingModal").modal({ backdrop: 'static', keyboard: false });
+                        }
+
+                    });
+                },
+                maxFiles: 1,
+                timeout: 500000,
+                accept: function (file, done) {
+                    let splits = file.name.split(".");
+                    if (splits[splits.length - 1] == "txt") {
+                        done();
+                    }
+                    else { done("Solo estan permitidos los archivos txt"); }
+                }
+            };
+    </script>
+}
+

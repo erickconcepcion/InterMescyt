@@ -1,6 +1,7 @@
 ﻿using InterMescyt.Data;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -40,13 +41,13 @@ namespace InterMescyt.Service
 
         public char SummaryId => 'S';
 
-        public int[] MapHeader => new int[] { 0, 1, 12, 28, 59 };
+        public int[] MapHeader => new int[] { 0, 1, 12, 27, 57 };
 
-        public int[] MapLine => new int[] { 0, 1, 12, 62, 73, 104, 108, 110 };
+        public int[] MapLine => new int[] { 0, 1, 12, 62, 73, 104, 108, 109 };
 
         public int[] MapSummary => new int[] { 0, 1 };
 
-        public int MaxHeader => 68;
+        public int MaxHeader => 67;
 
         public int MaxDetail => 119;
 
@@ -68,7 +69,7 @@ namespace InterMescyt.Service
             Rnc = GetHeaderField(1, line),
             Name = GetHeaderField(2, line),
             Location = GetHeaderField(3, line),
-            TransDate = DateTime.Parse(GetHeaderField(4, line))
+            TransDate = DateTime.ParseExact(GetHeaderField(4, line), "dd/MM/yyyy", CultureInfo.InvariantCulture)
         };
 
         public TransLine FileLineToTransLine(string line)
@@ -108,7 +109,7 @@ namespace InterMescyt.Service
             {
                 if (order == (MapSummary.Length - 1))
                 {
-                    return MaxHeader - MapSummary[order];
+                    return MaxSummary - MapSummary[order];
                 }
                 return MapSummary[order + 1] - MapSummary[order];
             }
@@ -186,19 +187,19 @@ namespace InterMescyt.Service
             {
                 throw new Exception("La linea esta vacia");
             }
-            if (line.FirstOrDefault() != HeaderId || line.FirstOrDefault() != DetailId || line.FirstOrDefault() != SummaryId)
+            if (line.FirstOrDefault() != HeaderId && line.FirstOrDefault() != DetailId && line.FirstOrDefault() != SummaryId)
             {
                 throw new Exception("La linea no esta debidamente identificada");
             }
-            if (line.FirstOrDefault() != HeaderId && line.Length != MaxHeader)
+            if (line.FirstOrDefault() == HeaderId && line.Length != MaxHeader)
             {
                 throw new Exception("Encabezado invalido, la longitud es incorrecta");
             }
-            if (line.FirstOrDefault() != DetailId && line.Length != MaxDetail)
+            if (line.FirstOrDefault() == DetailId && line.Length != MaxDetail)
             {
                 throw new Exception("Detalle invalido, la longitud es incorrecta");
             }
-            if (line.FirstOrDefault() != SummaryId && line.Length != MaxSummary)
+            if (line.FirstOrDefault() == SummaryId && line.Length != MaxSummary)
             {
                 throw new Exception("Sumario invalido, la longitud es incorrecta");
             }

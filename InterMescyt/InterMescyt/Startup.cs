@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using InterMescyt.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using InterMescyt.Service;
 
 namespace InterMescyt
 {
@@ -42,6 +43,8 @@ namespace InterMescyt
                 .AddDefaultUI(UIFramework.Bootstrap4)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            services.AddScoped<IFormatService, FormatService>();
+            services.AddScoped<IChargeService, ChargeService>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
