@@ -25,6 +25,6 @@ namespace InterMescyt.Data
         public string Title { get; set; }
 
         public int HeadrId { get; set; }
-        public Header Header { get; set; }
+        public virtual Header Header { get; set; }
     }
 }

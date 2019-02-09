@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace InterMescyt.Service
 {
-    interface IFormatService
+    public interface IFormatService
     {
         Header FileLineToHeader(string line);
         TransLine FileLineToTransLine(string line);
