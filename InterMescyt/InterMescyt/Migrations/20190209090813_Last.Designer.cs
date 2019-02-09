@@ -4,14 +4,16 @@ using InterMescyt.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace InterMescyt.Data.Migrations
+namespace InterMescyt.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190209090813_Last")]
+    partial class Last
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,6 +30,8 @@ namespace InterMescyt.Data.Migrations
                     b.Property<DateTime>("EndDate");
 
                     b.Property<bool>("Executed");
+
+                    b.Property<int?>("TransactionNumber");
 
                     b.HasKey("Id");
 
@@ -90,9 +94,7 @@ namespace InterMescyt.Data.Migrations
 
                     b.Property<string>("EnrollNumber");
 
-                    b.Property<int?>("HeaderId");
-
-                    b.Property<int>("HeadrId");
+                    b.Property<int>("HeaderId");
 
                     b.Property<string>("Name");
 
@@ -284,7 +286,8 @@ namespace InterMescyt.Data.Migrations
                 {
                     b.HasOne("InterMescyt.Data.Header", "Header")
                         .WithMany("TransLines")
-                        .HasForeignKey("HeaderId");
+                        .HasForeignKey("HeaderId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

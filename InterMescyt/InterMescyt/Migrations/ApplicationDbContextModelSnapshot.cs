@@ -4,22 +4,58 @@ using InterMescyt.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace InterMescyt.Data.Migrations
+namespace InterMescyt.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190208181652_Initial")]
-    partial class Initial
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.1-servicing-10028")
+                .HasAnnotation("ProductVersion", "2.2.0-rtm-35687")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("InterMescyt.Data.Execution", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("EndDate");
+
+                    b.Property<bool>("Executed");
+
+                    b.Property<int?>("TransactionNumber");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Executions");
+                });
+
+            modelBuilder.Entity("InterMescyt.Data.ExecutionLine", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ExecutionId");
+
+                    b.Property<bool>("Suscess");
+
+                    b.Property<string>("Text");
+
+                    b.Property<string>("ValidationMessage");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExecutionId");
+
+                    b.ToTable("ExecutionLines");
+                });
 
             modelBuilder.Entity("InterMescyt.Data.Header", b =>
                 {
@@ -56,9 +92,7 @@ namespace InterMescyt.Data.Migrations
 
                     b.Property<string>("EnrollNumber");
 
-                    b.Property<int?>("HeaderId");
-
-                    b.Property<int>("HeadrId");
+                    b.Property<int>("HeaderId");
 
                     b.Property<string>("Name");
 
@@ -238,11 +272,20 @@ namespace InterMescyt.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("InterMescyt.Data.ExecutionLine", b =>
+                {
+                    b.HasOne("InterMescyt.Data.Execution", "Execution")
+                        .WithMany("ExecutionLines")
+                        .HasForeignKey("ExecutionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("InterMescyt.Data.TransLine", b =>
                 {
                     b.HasOne("InterMescyt.Data.Header", "Header")
                         .WithMany("TransLines")
-                        .HasForeignKey("HeaderId");
+                        .HasForeignKey("HeaderId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

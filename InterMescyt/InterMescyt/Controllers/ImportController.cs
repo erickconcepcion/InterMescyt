@@ -28,14 +28,14 @@ namespace InterMescyt.Controllers
         [HttpPost("SaveUploadedFile")]
         public IActionResult SaveUploadedFile(IFormFile file)
         {
-            bool isSavedSuccessfully = true;
             if (file.Length == 0)
             {
                 return BadRequest("No se permiten archivos vacios");
             }
             Execution exec;
             exec = _chargeService.UploadFile(file.OpenReadStream());
-            return Ok(Url.Action("Details", "Executions", new { id = exec.Id }));
+            var header = _chargeService.ExecuteImport(exec.Id);
+            return Ok(exec.Id);
         }
 
 

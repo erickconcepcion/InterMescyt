@@ -16,31 +16,20 @@
 
 @section scripts
     {
-    <script type="text/javascript">
+<script type="text/javascript">
         Dropzone.options.dropzoneForm = {
                 init: function () {
                     this.on("complete", function (data) {
-                        //var res = JSON.parse(data.xhr.responseText);
                         if (data.xhr != undefined) {
                             console.log(data.xhr);
                             let response = JSON.parse(data.xhr.responseText)
-                            console.log(response, response.ExecutionId);
-                            //$("#loadingModal").modal('hide');
-                            if (data.xhr.status == 200 && response.ExecutionId != null) {
-                                if (response.Success) {
-                                    console.log(response);
-                                    console.log(response);
-                                    window.location.href = response;
-                                }
+                            console.log(response);
+                            if (data.xhr.status == 200) {
+                                console.log(response);
+                                console.log(`@Url.Action("Details","Executions")/${response}`);
+                                window.location.href = `@Url.Action("Details", "Executions")/${response}`;
                             }
                         }
-                    });
-                    this.on("uploadprogress", function (file, progress, bytesSent) {
-                        console.log(progress);
-                        if (progress>=99) {
-                            //$("#loadingModal").modal({ backdrop: 'static', keyboard: false });
-                        }
-
                     });
                 },
                 maxFiles: 1,
@@ -53,6 +42,6 @@
                     else { done("Solo estan permitidos los archivos txt"); }
                 }
             };
-    </script>
+</script>
 }
 

@@ -66,22 +66,22 @@ namespace InterMescyt.Service
         public Header FileLineToHeader(string line)
         => new Header
         {
-            Rnc = GetHeaderField(1, line),
-            Name = GetHeaderField(2, line),
-            Location = GetHeaderField(3, line),
-            TransDate = DateTime.ParseExact(GetHeaderField(4, line), "dd/MM/yyyy", CultureInfo.InvariantCulture)
+            Rnc = GetHeaderField(1, line).Trim(),
+            Name = GetHeaderField(2, line).Trim(),
+            Location = GetHeaderField(3, line).Trim(),
+            TransDate = DateTime.ParseExact(GetHeaderField(4, line).Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture)
         };
 
         public TransLine FileLineToTransLine(string line)
         => new TransLine
         {
-            Cedula = GetDetailField(1,line),
-            Name = GetDetailField(2, line),
-            EnrollNumber = GetDetailField(3, line),
-            Career = GetDetailField(4, line),
-            AcademicIndex = decimal.Parse(GetDetailField(5, line)),
-            Period = int.Parse(GetDetailField(6, line)),
-            Title = GetDetailField(7, line),
+            Cedula = GetDetailField(1,line).Trim(),
+            Name = GetDetailField(2, line).Trim(),
+            EnrollNumber = GetDetailField(3, line).Trim(),
+            Career = GetDetailField(4, line).Trim(),
+            AcademicIndex = decimal.Parse(GetDetailField(5, line).Trim()),
+            Period = int.Parse(GetDetailField(6, line).Trim()),
+            Title = GetDetailField(7, line).Trim(),
         };
 
         public string GetDetailField(int order, string line)

@@ -42,13 +42,17 @@ namespace InterMescyt.Service
                 exec.ExecutionLines
                 .Where(el=>el.Text.FirstOrDefault()==_formatService.HeaderId)
                 .FirstOrDefault().Text);
+            header.InputDate = DateTime.Now;
             _context.Headers.Add(header);
-            exec.Executed = true;
             _context.SaveChanges();
             foreach (var item in exec.ExecutionLines.Where(el=>el.Text.FirstOrDefault() == _formatService.DetailId))
             {
-                _context.TransLines.Add(_formatService.FileLineToTransLine(item.Text));
+                var trans = _formatService.FileLineToTransLine(item.Text);
+                trans.HeaderId = header.Id;
+                _context.TransLines.Add(trans);
             }
+            exec.Executed = true;
+            exec.TransactionNumber = header.Id;
             _context.SaveChanges();
             return header;
         }

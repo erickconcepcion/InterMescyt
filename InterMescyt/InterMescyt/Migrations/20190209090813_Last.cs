@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace InterMescyt.Data.Migrations
+namespace InterMescyt.Migrations
 {
-    public partial class CreateIdentitySchema : Migration
+    public partial class Last : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -45,6 +45,38 @@ namespace InterMescyt.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Executions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    EndDate = table.Column<DateTime>(nullable: false),
+                    Executed = table.Column<bool>(nullable: false),
+                    TransactionNumber = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Executions", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Headers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Rnc = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: true),
+                    Location = table.Column<string>(nullable: true),
+                    TransDate = table.Column<DateTime>(nullable: false),
+                    InputDate = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Headers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -153,6 +185,54 @@ namespace InterMescyt.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ExecutionLines",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Text = table.Column<string>(nullable: true),
+                    ValidationMessage = table.Column<string>(nullable: true),
+                    Suscess = table.Column<bool>(nullable: false),
+                    ExecutionId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExecutionLines", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ExecutionLines_Executions_ExecutionId",
+                        column: x => x.ExecutionId,
+                        principalTable: "Executions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TransLines",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Cedula = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: true),
+                    EnrollNumber = table.Column<string>(nullable: true),
+                    Career = table.Column<string>(nullable: true),
+                    AcademicIndex = table.Column<decimal>(nullable: false),
+                    Period = table.Column<int>(nullable: false),
+                    Title = table.Column<string>(nullable: true),
+                    HeaderId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TransLines", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TransLines_Headers_HeaderId",
+                        column: x => x.HeaderId,
+                        principalTable: "Headers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -191,6 +271,16 @@ namespace InterMescyt.Data.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExecutionLines_ExecutionId",
+                table: "ExecutionLines",
+                column: "ExecutionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TransLines_HeaderId",
+                table: "TransLines",
+                column: "HeaderId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -211,10 +301,22 @@ namespace InterMescyt.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "ExecutionLines");
+
+            migrationBuilder.DropTable(
+                name: "TransLines");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Executions");
+
+            migrationBuilder.DropTable(
+                name: "Headers");
         }
     }
 }
