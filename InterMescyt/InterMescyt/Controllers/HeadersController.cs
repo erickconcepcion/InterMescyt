@@ -46,6 +46,22 @@ namespace InterMescyt.Controllers
 
             return View(header);
         }
+        public async Task<IActionResult> DetailsLine(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var header = await _context.TransLines.Include(l=>l.Header)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (header == null)
+            {
+                return NotFound();
+            }
+
+            return View(header);
+        }
 
         public IActionResult Download(int? id)
         {
@@ -85,6 +101,41 @@ namespace InterMescyt.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(header);
+        }
+
+        // GET: Headers/CreateLine
+        public async Task<IActionResult> CreateLine(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var header = await _context.Headers
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (header == null)
+            {
+                return NotFound();
+            }
+            var ret = new TransLine { Id = 0, HeaderId = header.Id };
+            return View(ret);
+        }
+
+        // POST: Headers/CreateLine
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateLine([Bind("Id,Cedula,Name,EnrollNumber,Career,AcademicIndex,Period,Title,HeaderId")] TransLine line)
+        {
+            line.Id = 0;
+            if (ModelState.IsValid)
+            {
+                _context.Add(line);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Details), new { id = line.HeaderId});
+            }
+            return View(line);
         }
 
         // GET: Headers/Edit/5
@@ -138,6 +189,57 @@ namespace InterMescyt.Controllers
             return View(header);
         }
 
+        // GET: Headers/EditLine/5
+        public async Task<IActionResult> EditLine(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var line = await _context.TransLines.FindAsync(id);
+            if (line == null)
+            {
+                return NotFound();
+            }
+            return View(line);
+        }
+
+        // POST: Headers/EditLine/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditLine(int id, [Bind("Id,Cedula,Name,EnrollNumber,Career,AcademicIndex,Period,Title,HeaderId")] TransLine line)
+        {
+            if (id != line.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(line);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!HeaderExists(line.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Details), new { id = line.HeaderId});
+            }
+            return View(line);
+        }
+
         // GET: Headers/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -165,6 +267,35 @@ namespace InterMescyt.Controllers
             _context.Headers.Remove(header);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Headers/Delete/5
+        public async Task<IActionResult> DeleteLine(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var line = await _context.TransLines
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (line == null)
+            {
+                return NotFound();
+            }
+
+            return View(line);
+        }
+
+        // POST: Headers/Delete/5
+        [HttpPost, ActionName("DeleteLine")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteLineConfirmed(int id)
+        {
+            var line = await _context.TransLines.FindAsync(id);
+            _context.TransLines.Remove(line);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Details), new { id = line.HeaderId });
         }
 
         private bool HeaderExists(int id)

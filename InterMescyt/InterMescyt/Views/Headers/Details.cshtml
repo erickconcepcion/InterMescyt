@@ -43,6 +43,9 @@
     </dl>
     <a class="btn btn-info" asp-action="Download" asp-controller="Headers" asp-route-id="@Model.Id">Exportar Transaccion</a>
 </div>
+<p>
+    <a asp-action="CreateLine" asp-route-id="@Model.Id">Crear nuevo</a>
+</p>
 <table class="table">
     <thead>
         <tr>
@@ -67,34 +70,40 @@
             <th>
                 @Html.DisplayNameFor(model => model.TransLines.FirstOrDefault().Title)
             </th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model.TransLines)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Cedula)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EnrollNumber)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Career)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.AcademicIndex)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Period)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Title)
-                </td>
-            </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cedula)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EnrollNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Career)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AcademicIndex)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Period)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                <a asp-action="DetailsLine" asp-route-id="@item.Id">Detalles</a> |
+                <a asp-action="EditLine" asp-route-id="@item.Id">Editar</a> |
+                <a asp-action="DeleteLine" asp-route-id="@item.Id">Borrar</a>
+            </td>
+        </tr>
         }
     </tbody>
 </table>

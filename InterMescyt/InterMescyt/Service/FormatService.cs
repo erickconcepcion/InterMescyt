@@ -43,13 +43,13 @@ namespace InterMescyt.Service
 
         public int[] MapHeader => new int[] { 0, 1, 12, 27, 57 };
 
-        public int[] MapLine => new int[] { 0, 1, 12, 62, 73, 104, 108, 109 };
+        public int[] MapLine => new int[] { 0, 1, 12, 62, 73, 104, 108, 110 };
 
         public int[] MapSummary => new int[] { 0, 1 };
 
         public int MaxHeader => 67;
 
-        public int MaxDetail => 119;
+        public int MaxDetail => 120;
 
         public int MaxSummary => 7;
 
@@ -143,18 +143,21 @@ namespace InterMescyt.Service
 
         public string SetDetailField(int order, string value)
         {
+            value = value ?? string.Empty;
             int max = GetFieldMaxLength(order, DetailId.ToString());
             return value.PadRight( max ).Substring(0,max);
         }
 
         public string SetHeaderField(int order, string value)
         {
+            value = value ?? string.Empty;
             int max = GetFieldMaxLength(order, HeaderId.ToString());
             return value.PadRight(max).Substring(0, max);
         }
 
         public string SetSummaryField(int order, string value)
         {
+            value = value ?? string.Empty;
             int max = GetFieldMaxLength(order, SummaryId.ToString());
             return value.PadRight(max).Substring(0, max);
         }

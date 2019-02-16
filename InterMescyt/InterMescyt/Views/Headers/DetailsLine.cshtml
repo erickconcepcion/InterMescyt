@@ -1,0 +1,66 @@
+﻿@model InterMescyt.Data.TransLine
+
+@{
+    ViewData["Title"] = "DetailsLine";
+}
+
+<h1>DetailsLine</h1>
+
+<div>
+    <h4>TransLine</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Cedula)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Cedula)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.EnrollNumber)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.EnrollNumber)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Career)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Career)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.AcademicIndex)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.AcademicIndex)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Period)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Period)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Header)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Header.Id)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="EditLine" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Details" asp-route-id="@Model.HeaderId">Back to List</a>
+</div>
