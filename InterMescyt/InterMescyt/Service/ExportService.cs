@@ -1,5 +1,6 @@
 ﻿using InterMescyt.Data;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,6 +13,7 @@ namespace InterMescyt.Service
     {
         MemoryStream ExportFile(int headerId);
         string SetFileSummary(int lineCount);
+        MemoryStream ExportJsonFile(int headerId);
     }
     public class ExportService : IExportService
     {
@@ -33,6 +35,20 @@ namespace InterMescyt.Service
                 sw.WriteLine(_formatService.TransLineToFileLine(item));
             }
             sw.WriteLine(SetFileSummary(header.TransLines.Count));
+            sw.Flush();
+            sw.Close();
+            return stream;
+        }
+        public MemoryStream ExportJsonFile(int headerId)
+        {
+            var header = _context.Headers.Include(h => h.TransLines).FirstOrDefault(h => h.Id == headerId);
+            foreach (var item in header.TransLines)
+            {
+                item.Header = null;
+            }
+            MemoryStream stream = new MemoryStream();
+            TextWriter sw = new StreamWriter(stream);
+            sw.WriteLine(JsonConvert.SerializeObject(header));
             sw.Flush();
             sw.Close();
             return stream;

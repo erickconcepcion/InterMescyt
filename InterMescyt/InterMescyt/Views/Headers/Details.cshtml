@@ -42,6 +42,7 @@
         </dd>
     </dl>
     <a class="btn btn-info" asp-action="Download" asp-controller="Headers" asp-route-id="@Model.Id">Exportar Transaccion</a>
+    <a class="btn btn-info" asp-action="DownloadJson" asp-controller="Headers" asp-route-id="@Model.Id">Exportar Transaccion Json</a>
 </div>
 <p>
     <a asp-action="CreateLine" asp-route-id="@Model.Id">Crear nuevo</a>

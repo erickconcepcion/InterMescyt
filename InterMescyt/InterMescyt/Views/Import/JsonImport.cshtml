@@ -1,0 +1,46 @@
+﻿@{
+    ViewData["Title"] = "Json Import";
+}
+
+<h1>Json Import</h1>
+
+<form action="@Url.Action("SaveUploadedJsonFile")" class="dropzone" id="dropzoneForm">
+    <div style="border: 2px dashed #0087F7; border-radius: 5px; padding: 20px" class="dz-message needsclick text-center">
+        <h3>Arrastre aqui el archivo que desea cargar</h3><br>
+        <span class="note needsclick">
+            (Debe ser un archivo en formato json, de lo contrario fallara)
+        </span>
+    </div>
+</form>
+
+@section scripts
+    {
+    <script type="text/javascript">
+        Dropzone.options.dropzoneForm = {
+                init: function () {
+                    this.on("complete", function (data) {
+                        if (data.xhr != undefined) {
+                            console.log(data.xhr);
+                            let response = JSON.parse(data.xhr.responseText)
+                            console.log(response);
+                            if (data.xhr.status == 200) {
+                                console.log(response);
+                                console.log(`@Url.Action("Details","Executions")/${response}`);
+                                window.location.href = `@Url.Action("Details", "Executions")/${response}`;
+                            }
+                        }
+                    });
+                },
+                maxFiles: 1,
+                timeout: 500000,
+                accept: function (file, done) {
+                    let splits = file.name.split(".");
+                    if (splits[splits.length - 1] == "txt" || splits[splits.length - 1] == "json") {
+                        done();
+                    }
+                    else { done("Solo estan permitidos los archivos txt o Json"); }
+                }
+            };
+    </script>
+}
+

@@ -80,6 +80,23 @@ namespace InterMescyt.Controllers
 
 
         }
+        public IActionResult DownloadJson(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            MemoryStream stream = _exportService.ExportJsonFile(id.Value);
+            var content = stream.ToArray();
+            stream.Flush();
+            stream.Close();
+            if (content == null)
+                return NotFound();
+
+            return File(content, "application/force-download", $"Transaction{id}.txt"); // returns a FileStreamResult
+
+
+        }
 
         // GET: Headers/Create
         public IActionResult Create()

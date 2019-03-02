@@ -24,6 +24,10 @@ namespace InterMescyt.Controllers
         {
             return View();
         }
+        public ActionResult JsonImport()
+        {
+            return View();
+        }
 
         [HttpPost("SaveUploadedFile")]
         public IActionResult SaveUploadedFile(IFormFile file)
@@ -38,80 +42,20 @@ namespace InterMescyt.Controllers
             return Ok(exec.Id);
         }
 
-
-        // GET: Import/Details/5
-        public ActionResult Details(int id)
+        [HttpPost("SaveUploadedJsonFile")]
+        public IActionResult SaveUploadedJsonFile(IFormFile file)
         {
-            return View();
-        }
-
-        // GET: Import/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Import/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
+            if (file.Length == 0)
             {
-                // TODO: Add insert logic here
-
-                return RedirectToAction(nameof(Index));
+                return BadRequest("No se permiten archivos vacios");
             }
-            catch
-            {
-                return View();
-            }
+            Execution exec;
+            exec = _chargeService.UploadJsonFile(file.OpenReadStream());
+            var header = _chargeService.ExecuteImport(exec.Id);
+            return Ok(exec.Id);
         }
 
-        // GET: Import/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
 
-        // POST: Import/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Import/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Import/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+        
     }
 }

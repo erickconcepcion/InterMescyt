@@ -1,6 +1,7 @@
 ﻿using InterMescyt.Data;
 using InterMescyt.Models;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,6 +18,7 @@ namespace InterMescyt.Service
         ExecutionLine ExecutionLineCreate(ValidateResult validatedLine);
         Execution ExecutionCreate(IEnumerable<ExecutionLine>Lines);
         Header ExecuteImport(int execId);
+        Execution UploadJsonFile(Stream file);
     }
     public class ChargeService: IChargeService
     {
@@ -56,7 +58,7 @@ namespace InterMescyt.Service
             _context.SaveChanges();
             return header;
         }
-
+        
         public Execution ExecutionCreate(IEnumerable<ExecutionLine> Lines)
         {
             var ret = new Execution
@@ -109,7 +111,50 @@ namespace InterMescyt.Service
             Text = validatedLine.Input,
             ValidationMessage = validatedLine.Message
         };
-
+        public Execution UploadJsonFile(Stream file)
+        {
+            string totalLine = "";
+            using (StreamReader sr = new StreamReader(file))
+            {
+                string line;
+                while ((line = sr.ReadLine()) != null)
+                {
+                    totalLine = $"{totalLine}{line}";
+                }
+            }
+            var ret = new Execution
+            {
+                EndDate = DateTime.Now,
+                Executed = false
+            };
+            _context.Executions.Add(ret);
+            _context.SaveChanges();
+            ExecutionLine item = new ExecutionLine();
+            item.ExecutionId = ret.Id;
+            item.Text = totalLine;
+            try
+            {
+                var header = JsonConvert.DeserializeObject<Header>(totalLine);
+                if (header.Id==0 && header.TransLines.Sum(l=>l.Id)==0 && header.TransLines.Sum(l => l.HeaderId) == 0)
+                {
+                    _context.Headers.Add(header);
+                    _context.SaveChanges();
+                    ret.Executed = true;
+                    ret.TransactionNumber = header.Id;
+                }
+                else
+                {
+                    item.ValidationMessage = "No debe incluir el campo Id en ningun caso o por lo menos colocarlos en 0";
+                }
+            }
+            catch (Exception ex)
+            {
+                item.ValidationMessage = ex.Message;
+            }
+            _context.ExecutionLines.Add(item);
+            _context.SaveChanges();
+            return ret;
+        }
         public Execution UploadFile(Stream file)
         {
             var execLines = new List<ExecutionLine>();
