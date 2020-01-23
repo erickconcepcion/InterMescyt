@@ -29,6 +29,11 @@ namespace InterMescyt.Controllers
             return View();
         }
 
+        public ActionResult BankImport()
+        {
+            return View();
+        }
+
         [HttpPost("SaveUploadedFile")]
         public IActionResult SaveUploadedFile(IFormFile file)
         {
@@ -51,7 +56,7 @@ namespace InterMescyt.Controllers
             }
             Execution exec;
             _chargeService.ConfigureToBank();
-            exec = _chargeService.UploadFile(file.OpenReadStream());
+            exec = _chargeService.UploadFile(file.OpenReadStream(), true);
             var header = _chargeService.ExecuteBankImport(exec.Id);
             return Ok(exec.Id);
         }

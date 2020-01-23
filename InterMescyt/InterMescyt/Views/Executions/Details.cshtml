@@ -27,6 +27,10 @@
     {
         <a class="btn btn-info" asp-action="Details" asp-controller="Headers" asp-route-id="@Model.TransactionNumber.Value">Go to transaction</a>
     }
+    @if (Model.TransactionBankNumber != null)
+    {
+        <a class="btn btn-info" asp-action="Details" asp-controller="HeaderBanks" asp-route-id="@Model.TransactionBankNumber.Value">Go to transaction</a>
+    }
 </div>
 <table class="table">
     <thead>

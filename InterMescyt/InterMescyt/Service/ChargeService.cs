@@ -14,8 +14,8 @@ namespace InterMescyt.Service
 {
     public interface IChargeService
     {
-        Execution UploadFile(Stream file);
-        ValidateResult ValidateLine(string line);
+        Execution UploadFile(Stream file, bool isbank = false);
+        ValidateResult ValidateLine(string line, bool isbank = false);
         ExecutionLine ExecutionLineCreate(ValidateResult validatedLine);
         Execution ExecutionCreate(IEnumerable<ExecutionLine>Lines);
         Header ExecuteImport(int execId);
@@ -70,7 +70,7 @@ namespace InterMescyt.Service
                 return header;
             }
 
-            header = FileLineToHeaderBank(
+            header = _formatService.FileLineToHeaderBank(
                 exec.ExecutionLines
                 .Where(el => el.Text.FirstOrDefault() == _formatService.HeaderId)
                 .FirstOrDefault().Text);
@@ -79,7 +79,7 @@ namespace InterMescyt.Service
             _context.SaveChanges();
             foreach (var item in exec.ExecutionLines.Where(el => el.Text.FirstOrDefault() == _formatService.DetailId))
             {
-                var trans = FileLineToTransLineBank(item.Text);
+                var trans = _formatService.FileLineToTransLineBank(item.Text);
                 trans.HeaderBankId = header.Id;
                 _context.TransLineBanks.Add(trans);
             }
@@ -187,12 +187,12 @@ namespace InterMescyt.Service
         }
         public void ConfigureToBank()
         {
-            _formatService.MapHeader = new int[] { 0, 1, 12 };
-            _formatService.MapLine = new int[] { 0, 1, 12, 23, 27 };
-            _formatService.MaxHeader = 18;
-            _formatService.MaxDetail = 37;
+            _formatService.MapHeader = new int[] { 0, 1, 10 };
+            _formatService.MapLine = new int[] { 0, 1, 12, 22, 28 };
+            _formatService.MaxHeader = 20;
+            _formatService.MaxDetail = 38;
         }
-        public Execution UploadFile(Stream file)
+        public Execution UploadFile(Stream file, bool isbank =false)
         {
             var execLines = new List<ExecutionLine>();
             using (StreamReader sr = new StreamReader(file))
@@ -200,13 +200,13 @@ namespace InterMescyt.Service
                 string line;
                 while ((line = sr.ReadLine()) != null)
                 {
-                    execLines.Add( ExecutionLineCreate( ValidateLine(line) ) );
+                    execLines.Add( ExecutionLineCreate( ValidateLine(line, isbank) ) );
                 }
             }
             return ExecutionCreate(execLines);
         }
 
-        public ValidateResult ValidateLine(string line)
+        public ValidateResult ValidateLine(string line, bool isbank = false)
         {
             var init = new ValidateResult
             {
@@ -216,17 +216,13 @@ namespace InterMescyt.Service
             try
             {
                 _formatService.ValidateLineStructure(line);
-                if (line.FirstOrDefault()==_formatService.HeaderId)
+                if (!isbank)
                 {
-                    _formatService.FileLineToHeader(line);
+                    ValidateStandard(line);
                 }
-                else if (line.FirstOrDefault() == _formatService.DetailId)
+                else
                 {
-                    _formatService.FileLineToTransLine(line);
-                }
-                else if (line.FirstOrDefault() == _formatService.SummaryId)
-                {
-                    int.Parse(_formatService.GetSummaryField(1, line));
+                    ValidateBank(line);
                 }
                 //int.Parse(_formatService.GetSummaryField(1, sum.FirstOrDefault().Text))
                 init.Message = "Estructura Valida";
@@ -240,20 +236,36 @@ namespace InterMescyt.Service
             return init;
             
         }
-        private HeaderBank FileLineToHeaderBank(string line)
-        => new HeaderBank
+        private void ValidateStandard(string line)
         {
-            Rnc = _formatService.GetHeaderField(1, line).Trim(),
-            TransDate = DateTime.ParseExact(_formatService.GetHeaderField(2, line).Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture)
-        };
+            if (line.FirstOrDefault() == _formatService.HeaderId)
+            {
+                _formatService.FileLineToHeader(line);
+            }
+            else if (line.FirstOrDefault() == _formatService.DetailId)
+            {
+                _formatService.FileLineToTransLine(line);
+            }
+            else if (line.FirstOrDefault() == _formatService.SummaryId)
+            {
+                int.Parse(_formatService.GetSummaryField(1, line));
+            }
+        }
+        private void ValidateBank(string line)
+        {
+            if (line.FirstOrDefault() == _formatService.HeaderId)
+            {
+                _formatService.FileLineToHeaderBank(line);
+            }
+            else if (line.FirstOrDefault() == _formatService.DetailId)
+            {
+                _formatService.FileLineToTransLineBank(line);
+            }
+            else if (line.FirstOrDefault() == _formatService.SummaryId)
+            {
+                int.Parse(_formatService.GetSummaryField(1, line));
+            }
+        }
 
-        private TransLineBank FileLineToTransLineBank(string line)
-        => new TransLineBank
-        {
-            Cedula = _formatService.GetDetailField(1, line).Trim(),
-            BankAccount = _formatService.GetDetailField(2, line).Trim(),
-            NetSalary = decimal.Parse(_formatService.GetDetailField(3, line).Trim()),
-            TransDate = DateTime.ParseExact(_formatService.GetDetailField(4, line).Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture)
-        };
     }
 }

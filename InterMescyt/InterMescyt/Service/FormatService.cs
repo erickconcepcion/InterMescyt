@@ -31,6 +31,8 @@ namespace InterMescyt.Service
         void ValidateLineStructure(string line);
         int GetFieldMaxLength(int order, string line);
         string Ensamble(string[] input);
+        HeaderBank FileLineToHeaderBank(string line);
+        TransLineBank FileLineToTransLineBank(string line);
 
     }
     public class FormatService : IFormatService
@@ -83,7 +85,21 @@ namespace InterMescyt.Service
             Period = int.Parse(GetDetailField(6, line).Trim()),
             Title = GetDetailField(7, line).Trim(),
         };
+        public HeaderBank FileLineToHeaderBank(string line)
+        => new HeaderBank
+        {
+            Rnc = GetHeaderField(1, line).Trim(),
+            TransDate = DateTime.ParseExact(GetHeaderField(2, line).Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture)
+        };
 
+        public TransLineBank FileLineToTransLineBank(string line)
+        => new TransLineBank
+        {
+            Cedula = GetDetailField(1, line).Trim(),
+            BankAccount = GetDetailField(2, line).Trim(),
+            NetSalary = decimal.Parse(GetDetailField(3, line).Trim()),
+            TransDate = DateTime.ParseExact(GetDetailField(4, line).Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture)
+        };
         public string GetDetailField(int order, string line)
         => line.Substring(MapLine[order], GetFieldMaxLength(order, line));
 

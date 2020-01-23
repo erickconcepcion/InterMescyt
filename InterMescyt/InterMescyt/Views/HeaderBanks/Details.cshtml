@@ -1,0 +1,74 @@
+﻿@model InterMescyt.Data.HeaderBank
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>HeaderBank</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Rnc)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Rnc)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TransDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TransDate)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.InputDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.InputDate)
+        </dd>
+    </dl>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.TransLineBanks.FirstOrDefault().Cedula)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TransLineBanks.FirstOrDefault().BankAccount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TransLineBanks.FirstOrDefault().NetSalary)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TransLineBanks.FirstOrDefault().TransDate)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.TransLineBanks)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cedula)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BankAccount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NetSalary)
+                </td>
+                <td>
+                    @Html.Raw(item.TransDate.ToString("dd/MM/yyyy"))
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
