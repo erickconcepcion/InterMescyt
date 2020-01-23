@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -19,6 +20,8 @@ namespace InterMescyt.Service
         Execution ExecutionCreate(IEnumerable<ExecutionLine>Lines);
         Header ExecuteImport(int execId);
         Execution UploadJsonFile(Stream file);
+        void ConfigureToBank();
+        HeaderBank ExecuteBankImport(int execId);
     }
     public class ChargeService: IChargeService
     {
@@ -58,7 +61,34 @@ namespace InterMescyt.Service
             _context.SaveChanges();
             return header;
         }
-        
+        public HeaderBank ExecuteBankImport(int execId)
+        {
+            HeaderBank header = null;
+            Execution exec = _context.Executions.Where(e => e.Id == execId).Include(e => e.ExecutionLines).FirstOrDefault();
+            if (exec.ExecutionLines.Any(el => !el.Suscess))
+            {
+                return header;
+            }
+
+            header = FileLineToHeaderBank(
+                exec.ExecutionLines
+                .Where(el => el.Text.FirstOrDefault() == _formatService.HeaderId)
+                .FirstOrDefault().Text);
+            header.InputDate = DateTime.Now;
+            _context.HeaderBanks.Add(header);
+            _context.SaveChanges();
+            foreach (var item in exec.ExecutionLines.Where(el => el.Text.FirstOrDefault() == _formatService.DetailId))
+            {
+                var trans = FileLineToTransLineBank(item.Text);
+                trans.HeaderBankId = header.Id;
+                _context.TransLineBanks.Add(trans);
+            }
+            exec.Executed = true;
+            exec.TransactionBankNumber = header.Id;
+            _context.SaveChanges();
+            return header;
+        }
+
         public Execution ExecutionCreate(IEnumerable<ExecutionLine> Lines)
         {
             var ret = new Execution
@@ -155,6 +185,13 @@ namespace InterMescyt.Service
             _context.SaveChanges();
             return ret;
         }
+        public void ConfigureToBank()
+        {
+            _formatService.MapHeader = new int[] { 0, 1, 12 };
+            _formatService.MapLine = new int[] { 0, 1, 12, 23, 27 };
+            _formatService.MaxHeader = 18;
+            _formatService.MaxDetail = 37;
+        }
         public Execution UploadFile(Stream file)
         {
             var execLines = new List<ExecutionLine>();
@@ -203,5 +240,20 @@ namespace InterMescyt.Service
             return init;
             
         }
+        private HeaderBank FileLineToHeaderBank(string line)
+        => new HeaderBank
+        {
+            Rnc = _formatService.GetHeaderField(1, line).Trim(),
+            TransDate = DateTime.ParseExact(_formatService.GetHeaderField(2, line).Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture)
+        };
+
+        private TransLineBank FileLineToTransLineBank(string line)
+        => new TransLineBank
+        {
+            Cedula = _formatService.GetDetailField(1, line).Trim(),
+            BankAccount = _formatService.GetDetailField(2, line).Trim(),
+            NetSalary = decimal.Parse(_formatService.GetDetailField(3, line).Trim()),
+            TransDate = DateTime.ParseExact(_formatService.GetDetailField(4, line).Trim(), "dd/MM/yyyy", CultureInfo.InvariantCulture)
+        };
     }
 }

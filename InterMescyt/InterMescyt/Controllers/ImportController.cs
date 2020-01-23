@@ -42,6 +42,20 @@ namespace InterMescyt.Controllers
             return Ok(exec.Id);
         }
 
+        [HttpPost("SaveUploadedBankFile")]
+        public IActionResult SaveUploadedBankFile(IFormFile file)
+        {
+            if (file.Length == 0)
+            {
+                return BadRequest("No se permiten archivos vacios");
+            }
+            Execution exec;
+            _chargeService.ConfigureToBank();
+            exec = _chargeService.UploadFile(file.OpenReadStream());
+            var header = _chargeService.ExecuteBankImport(exec.Id);
+            return Ok(exec.Id);
+        }
+
         [HttpPost("SaveUploadedJsonFile")]
         public IActionResult SaveUploadedJsonFile(IFormFile file)
         {

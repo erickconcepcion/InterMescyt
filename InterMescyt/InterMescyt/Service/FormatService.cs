@@ -16,11 +16,11 @@ namespace InterMescyt.Service
         char HeaderId { get; }
         char DetailId { get; }
         char SummaryId { get; }
-        int[] MapHeader { get; }
-        int[] MapLine { get; }
+        int[] MapHeader { get; set; }
+        int[] MapLine { get; set; }
         int[] MapSummary { get; }
-        int MaxHeader { get; }
-        int MaxDetail { get; }
+        int MaxHeader { get; set; }
+        int MaxDetail { get; set; }
         int MaxSummary { get; }
         string GetDetailField(int order, string lin);
         string GetHeaderField(int order, string lin);
@@ -41,15 +41,15 @@ namespace InterMescyt.Service
 
         public char SummaryId => 'S';
 
-        public int[] MapHeader => new int[] { 0, 1, 12, 27, 57 };
+        public int[] MapHeader { get; set; } = new int[] { 0, 1, 12, 27, 57 };
 
-        public int[] MapLine => new int[] { 0, 1, 12, 62, 73, 104, 108, 110 };
+        public int[] MapLine { get; set; } = new int[] { 0, 1, 12, 62, 73, 104, 108, 110 };
 
         public int[] MapSummary => new int[] { 0, 1 };
 
-        public int MaxHeader => 67;
+        public int MaxHeader { get; set; } = 67;
 
-        public int MaxDetail => 120;
+        public int MaxDetail { get; set; } = 120;
 
         public int MaxSummary => 7;
 
