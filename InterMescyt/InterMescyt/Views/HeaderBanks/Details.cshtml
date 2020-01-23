@@ -29,6 +29,8 @@
             @Html.DisplayFor(model => model.InputDate)
         </dd>
     </dl>
+
+    <a class="btn btn-info" asp-action="Download" asp-controller="HeaderBanks" asp-route-id="@Model.Id">Exportar Transaccion</a>
 </div>
 
 <table class="table">

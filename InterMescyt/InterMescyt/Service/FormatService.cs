@@ -33,6 +33,8 @@ namespace InterMescyt.Service
         string Ensamble(string[] input);
         HeaderBank FileLineToHeaderBank(string line);
         TransLineBank FileLineToTransLineBank(string line);
+        string HeaderBankToFileLine(HeaderBank header);
+        string TransLineBankToFileLine(TransLineBank line);
 
     }
     public class FormatService : IFormatService
@@ -155,7 +157,23 @@ namespace InterMescyt.Service
             var ret = Ensamble(toEnsamble.ToArray());
             ValidateLineStructure(ret);
             return ret;
-        }       
+        }
+        public string HeaderBankToFileLine(HeaderBank header)
+        {
+            var data = new string[] {
+                HeaderId.ToString(),
+                header.Rnc,
+                header.TransDate.ToString("dd/MM/yyyy")
+            };
+            List<string> toEnsamble = new List<string>();
+            for (int i = 0; i <= data.Length - 1; i++)
+            {
+                toEnsamble.Add(SetHeaderField(i, data[i]));
+            }
+            var ret = Ensamble(toEnsamble.ToArray());
+            ValidateLineStructure(ret);
+            return ret;
+        }
 
         public string SetDetailField(int order, string value)
         {
@@ -199,6 +217,26 @@ namespace InterMescyt.Service
             ValidateLineStructure(ret);
             return ret;
             
+        }
+
+        public string TransLineBankToFileLine(TransLineBank line)
+        {
+            var data = new string[] {
+                DetailId.ToString(),
+                line.Cedula,
+                line.BankAccount,
+                line.NetSalary.ToString(),
+                line.TransDate.ToString("dd/MM/yyyy")
+            };
+            List<string> toEnsamble = new List<string>();
+            for (int i = 0; i <= data.Length - 1; i++)
+            {
+                toEnsamble.Add(SetDetailField(i, data[i]));
+            }
+            var ret = Ensamble(toEnsamble.ToArray());
+            ValidateLineStructure(ret);
+            return ret;
+
         }
 
         public void ValidateLineStructure(string line)

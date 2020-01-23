@@ -14,6 +14,7 @@ namespace InterMescyt.Service
         MemoryStream ExportFile(int headerId);
         string SetFileSummary(int lineCount);
         MemoryStream ExportJsonFile(int headerId);
+        MemoryStream ExportBankFile(int headerId);
     }
     public class ExportService : IExportService
     {
@@ -35,6 +36,29 @@ namespace InterMescyt.Service
                 sw.WriteLine(_formatService.TransLineToFileLine(item));
             }
             sw.WriteLine(SetFileSummary(header.TransLines.Count));
+            sw.Flush();
+            sw.Close();
+            return stream;
+        }
+        public void ConfigureToBank()
+        {
+            _formatService.MapHeader = new int[] { 0, 1, 10 };
+            _formatService.MapLine = new int[] { 0, 1, 12, 22, 28 };
+            _formatService.MaxHeader = 20;
+            _formatService.MaxDetail = 38;
+        }
+        public MemoryStream ExportBankFile(int headerId)
+        {
+            ConfigureToBank();
+            var header = _context.HeaderBanks.Include(h => h.TransLineBanks).FirstOrDefault(h => h.Id == headerId);
+            MemoryStream stream = new MemoryStream();
+            TextWriter sw = new StreamWriter(stream);
+            sw.WriteLine(_formatService.HeaderBankToFileLine(header));
+            foreach (var item in header.TransLineBanks)
+            {
+                sw.WriteLine(_formatService.TransLineBankToFileLine(item));
+            }
+            sw.WriteLine(SetFileSummary(header.TransLineBanks.Count));
             sw.Flush();
             sw.Close();
             return stream;
